@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:robinhood/demos/crypto_summary_demo.dart';
+import 'package:robinhood/demos/neon_horizon_demo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: const MyHomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -29,9 +32,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: SizedBox(),
+    return Scaffold(
+      body: SizedBox.expand(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 64),
+          child: Column(
+            children: const [
+              CryptoSummaryDemo(),
+              SizedBox(height: 64),
+              NeonHorizonDemo(),
+            ],
+          ),
+        ),
       ),
     );
   }
