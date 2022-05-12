@@ -30,7 +30,22 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _ticker = createTicker(_onTick)..start();
+    _ticker = createTicker(_onTick);
+
+    if (widget.animate) {
+      _ticker.start();
+    }
+  }
+
+  @override
+  void didUpdateWidget(NeonHorizon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!widget.animate && oldWidget.animate) {
+      _ticker.stop();
+    } else if (widget.animate && !oldWidget.animate) {
+      _ticker.start();
+    }
   }
 
   @override
@@ -41,8 +56,7 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
 
   void _onTick(Duration elapsedTime) {
     setState(() {
-      _distancePercent = elapsedTime.inMilliseconds / const Duration(seconds: 5).inMilliseconds;
-      _distancePercent = _distancePercent > 1.0 ? _distancePercent - _distancePercent.floor() : _distancePercent;
+      _distancePercent = (elapsedTime.inMilliseconds / const Duration(seconds: 3).inMilliseconds) % 1.0;
     });
   }
 
@@ -83,7 +97,9 @@ class _NeonHorizonPainter extends CustomPainter {
     required this.distancePercent,
     required Color lineColor,
   })  : _backgroundPaint = Paint(),
-        _linePaint = Paint()..color = lineColor;
+        _linePaint = Paint()
+          ..color = lineColor
+          ..strokeWidth = 2;
 
   /// Distance traveled across the plane, with 100% meaning
   /// that a horizontal line at the nearest edge of the plane
@@ -98,32 +114,31 @@ class _NeonHorizonPainter extends CustomPainter {
     _paintBackground(canvas, size);
 
     final centerX = size.width / 2;
-    const spacing = 35.0;
+    const spacing = 45.0;
     double deltaX = spacing;
 
-    _drawVerticalLine(canvas, size, centerX, centerX);
+    canvas.drawLine(Offset(centerX, 0), Offset(centerX, size.height), _linePaint);
     while (centerX - deltaX >= 0) {
-      _drawVerticalLine(canvas, size, centerX - deltaX, centerX - (2.5 * deltaX));
-      _drawVerticalLine(canvas, size, centerX + deltaX, centerX + (2.5 * deltaX));
+      canvas.drawLine(Offset(centerX - deltaX, 0), Offset(centerX - (2.5 * deltaX), size.height), _linePaint);
+      canvas.drawLine(Offset(centerX + deltaX, 0), Offset(centerX + (2.5 * deltaX), size.height), _linePaint);
 
       deltaX += spacing;
     }
 
-    final baseLineY = _horizontalLineAtTime(size, distancePercent);
-    _drawHorizontalLine(canvas, size, baseLineY);
+    // Draw the horizontal reference line. Later, we'll fill in
+    // additional lines above this reference line, to fill
+    // in all visible space.
+    const dt = 0.1;
+    double t = distancePercent % dt;
+    final firstLineY = _horizontalLineAtTime(size, t);
+    canvas.drawLine(Offset(0, firstLineY), Offset(size.width, firstLineY), _linePaint);
 
-    double t = distancePercent + 0.1;
+    // Draw lines above the reference line.
+    t = t + dt;
     while (_horizontalLineAtTime(size, t) > 0) {
       final y = _horizontalLineAtTime(size, t);
-      _drawHorizontalLine(canvas, size, y);
-      t += 0.1;
-    }
-
-    t = distancePercent - 0.1;
-    while (_horizontalLineAtTime(size, t) < size.height) {
-      final y = _horizontalLineAtTime(size, t);
-      _drawHorizontalLine(canvas, size, y);
-      t -= 0.1;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), _linePaint);
+      t += dt;
     }
   }
 
@@ -141,29 +156,11 @@ class _NeonHorizonPainter extends CustomPainter {
   }
 
   double _horizontalLineAtTime(Size size, double t) {
-    return (1.5 * size.height) - ((1.5 * size.height) * sqrt(t));
-  }
-
-  void _drawHorizontalLine(Canvas canvas, Size size, double y) {
-    final linePath = Path()
-      ..moveTo(0, y)
-      ..lineTo(size.width, y)
-      ..lineTo(size.width, y + 2)
-      ..lineTo(0, y + 2)
-      ..close();
-
-    canvas.drawPath(linePath, _linePaint);
-  }
-
-  void _drawVerticalLine(Canvas canvas, Size size, double topX, double bottomX) {
-    final linePath = Path()
-      ..moveTo(bottomX, size.height)
-      ..lineTo(topX, 0)
-      ..lineTo(topX + 2, 0)
-      ..lineTo(bottomX + 2, size.height)
-      ..close();
-
-    canvas.drawPath(linePath, _linePaint);
+    // Evolution of math:
+    t = t.clamp(0.0, 1.0);
+    // return size.height * (1 - t);
+    final distancePercent = sin(t * pi / 2);
+    return size.height * (1 - distancePercent);
   }
 
   @override

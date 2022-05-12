@@ -12,6 +12,7 @@ class NeonHorizonDemo extends StatelessWidget {
       background: screenBackground,
       child: NeonHorizon(
         color: priceIncreaseColor,
+        animate: true,
       ),
     );
   }

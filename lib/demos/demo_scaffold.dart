@@ -12,16 +12,18 @@ class DemoScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 500,
-      height: 300,
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Center(
-        child: child,
+    return RepaintBoundary(
+      child: Container(
+        width: 500,
+        height: 300,
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Center(
+          child: child,
+        ),
       ),
     );
   }
