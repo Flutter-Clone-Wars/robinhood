@@ -62,7 +62,7 @@ class _GlitchyPriceState extends State<GlitchyPrice> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       // Dispose on next frame so that the AnimatedBuilder doesn't
       // throw exception when it de-registers its listener.
       _controller.dispose();

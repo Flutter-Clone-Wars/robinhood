@@ -1,11 +1,10 @@
 import 'dart:async';
 
+import 'package:clone_tools/clone_tools.dart';
 import 'package:flutter/material.dart';
 import 'package:robinhood/crypto/coin_summary.dart';
 import 'package:robinhood/crypto/crypto_theme.dart';
 import 'package:robinhood/currency.dart';
-
-import 'demo_scaffold.dart';
 
 class CryptoSummaryDemo extends StatefulWidget {
   const CryptoSummaryDemo({Key? key}) : super(key: key);
@@ -55,16 +54,18 @@ class _CryptoSummaryDemoState extends State<CryptoSummaryDemo> {
 
   @override
   Widget build(BuildContext context) {
-    return DemoScaffold(
+    return DemoCard.wide(
       background: screenBackground,
-      child: SizedBox(
-        width: 300,
-        child: CoinSummary(
-          abbreviation: "BTC",
-          name: "Bitcoin",
-          price: _btcPrices[_priceIndex],
-          deltaPrice: const USD.fromCents(45865),
-          deltaPercent: 0.0115,
+      child: Center(
+        child: SizedBox(
+          width: 300,
+          child: CoinSummary(
+            abbreviation: "BTC",
+            name: "Bitcoin",
+            price: _btcPrices[_priceIndex],
+            deltaPrice: const USD.fromCents(45865),
+            deltaPercent: 0.0115,
+          ),
         ),
       ),
     );

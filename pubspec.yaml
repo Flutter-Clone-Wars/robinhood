@@ -16,6 +16,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
+  clone_tools:
+    git:
+      url: git@github.com:Flutter-Clone-Wars/clone_tools.git
   intl: ^0.17.0
   vector_math: ^2.1.1
 
@@ -29,9 +32,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/news-card-stack/
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
