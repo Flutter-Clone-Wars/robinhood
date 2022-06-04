@@ -62,30 +62,29 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: ShaderMask(
-        shaderCallback: (rect) {
-          return LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.0),
-              Colors.white.withOpacity(0.7),
-              Colors.white.withOpacity(0.7),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: const [
-              0.1,
-              0.4,
-              1.0,
-            ],
-          ).createShader(rect);
-        },
-        child: CustomPaint(
-          painter: _NeonHorizonPainter(
-            distancePercent: _distancePercent,
-            lineColor: widget.color,
-          ),
+    return ShaderMask(
+      shaderCallback: (rect) {
+        return LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.0),
+            Colors.white.withOpacity(0.7),
+            Colors.white.withOpacity(0.7),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: const [
+            0.1,
+            0.4,
+            1.0,
+          ],
+        ).createShader(rect);
+      },
+      child: CustomPaint(
+        painter: _NeonHorizonPainter(
+          distancePercent: _distancePercent,
+          lineColor: widget.color,
         ),
+        size: Size.infinite,
       ),
     );
   }
@@ -113,6 +112,7 @@ class _NeonHorizonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     _paintBackground(canvas, size);
 
+    // Draw vertical lines.
     final centerX = size.width / 2;
     const spacing = 45.0;
     double deltaX = spacing;
